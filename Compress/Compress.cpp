@@ -5,7 +5,7 @@
 
 
 void test_for_big() {
-	for (int i = 0; i <= 10000000; i += 1000000)
+	for (int i = 1; i <= 10000000; i *= 10)
 	{
 		std::pair<std::string, size_t> temp = Compressor::compression(std::string(i, '*'));
 		std::cout << temp.first << "\t" << temp.second << "\t" << (Compressor::di_compress(temp) == std::string(i, '*')) << "\n";
@@ -31,5 +31,6 @@ void test_for_times() {
 
 int main()
 {
+	test_for_big();
 	return 0;
 }
