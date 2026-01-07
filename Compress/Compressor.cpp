@@ -1,19 +1,21 @@
 #include "Compressor.h"
 
+#include <string>
+#include <utility>
+
 std::string Compressor::compress_once(std::string& text) {
 	std::string result;
 	result.reserve(text.size() * 2);
 
-	for (size_t i = 0; i < text.size(); ) {
-		size_t j = i;
+	for (size_t i = 0, j = 0; i < text.size(); ) {
 		while (j < text.size() && text[j] == text[i])
-			++j;
+			j++;
 
 		size_t count = j - i;
 		if (count > 1)
 			result += std::to_string(count);
 
-		result += '#';
+		result += Compressor::delimiter;
 		result += text[i];
 
 		i = j;
@@ -23,20 +25,19 @@ std::string Compressor::compress_once(std::string& text) {
 
 std::string Compressor::di_compress_once(std::string& text) {
 	std::string result;
+	std::string n;
 	result.reserve(text.size() * 2);
 
-	for (size_t i = 0; i < text.size(); ) {
-		std::string n;
-		while (i < text.size() && text[i] != '#') {
-			n += text[i];
-			i++;
-		}
+	for (size_t i = 0; i < text.size(); n = "", i++) {
+		while (i < text.size() && text[i] != Compressor::delimiter)
+			n += text[i++];
 
-		i += 2;
+		i++;
 
 		if (n == "")
-			result += text[i - 1];
-		else result += std::string(std::stoi(n), text[i - 1]);
+			result += text[i];
+
+		else result += std::string(std::stoi(n), text[i]);
 	}
 	return result;
 }
@@ -67,7 +68,7 @@ std::pair<std::string, size_t> Compressor::compression(std::string text) {
 	return { min, t };
 }
 
-std::string Compressor::di_compress(std::string text, int times) {
+std::string Compressor::di_compress(std::string text, size_t times) {
 	if (times <= 0)
 		return text;
 
